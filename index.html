@@ -7,7 +7,7 @@
 		<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 		<style type="text/css">
 		    body{
-		        font-size: 24px;
+		        font-size: 20px;
 		        background: black;
 		        color: white;
 		    }
@@ -28,6 +28,7 @@
 		        width: 80%;
 		        height: 100%;
 		        box-sizing: border-box;
+		        font-size: 10px;
 		    }
 		    
 		    #Results{
@@ -49,27 +50,75 @@
 		        margin-right: 0.5rem;
 		    }
 		    
-		    #Results .part0{
-		        color: gray;
+		    #Results .opcode{
+		        color: red;
 		    }
+		    
+		    #Results .description{
+		        color: blue;
+		    }
+		    
+		    #Results .prefix{
+		        color: green;
+		    }
+		    
+		    #Results .params{
+		        color: grey;
+		    }
+		    /* zero part == asm command*/
+		    #Results .part0{ 
+		        color: #00FFFF;
+		    }
+
 		    
 		</style>
 		<script type="text/javascript">
+		    var prefix = [72, 90, 91, 92];
+		    var params = ['XX', 'LS', 'MS', 'ExtB', 'LS1', 'MS1', 'LS2', 'MS2', 'XX1','XX2']
 		    function parse(){
                 var text = textBox.value;
                 localStorage.setItem("last_value", text);
-                var parsedText = text.split("\n");
+                var parsedText = text.split("\n"); // split for line
                 parsedText.map((item)=>{
-                    var parts = item.split(" ");
+                    var elements = item.split(";"); // split for before descr and descr
+                    
+                    var parts = elements[0].split(" "); // split work part of line for words
                     var line = Results.div(".line");
                     var partNo = 0;
                     parts.map((part)=>{
-                       line.div(".part.part" + partNo++, part); 
+                        let flag = 0;
+                        regexp = /[^A-Fa-f0-9]/i
+                        if (part != ""){
+                            for (var i = 0; i < prefix.length; i++){ // check is it prefix
+                                if (prefix[i] == part){
+                                    flag = 1; //flag == 1 => prefix
+                                }
+                            }
+                            for (var i = 0; i < params.length; i++){ // check is it prefix
+                                if (params[i] == part){
+                                    flag = 2; //flag == 1 => prefix
+                                }
+                            }
+                            if (flag == 1) {
+                                line.div(".part" + ".prefix", part);  // mark as prefix
+                            } else
+                            if (flag == 2){
+                                line.div(".part" + '.params', part); //parameters
+                            } else
+                            if (!regexp.test(part) && 0 <= parseInt(part, 16) && parseInt(part, 16) <= 255){ //opcode checking
+                                line.div(".part." + ".opcode", part);  //opcode
+                            } else
+                            line.div(".part.part" + partNo++, part);  // otherwise
+                        }
                     });
+                    
+                    if (elements[1] != ""){
+                            line.div(".part" + ".description", elements[1]); // line after ; marked as description
+                    }
                 });
             }
         
-            WS.DOMload(function(){
+            WS.DOMload(function(){ //magic function for loading last parsed text
                 FileUploader.addEventListener('change', ()=>{
                     if (FileUploader.files && FileUploader.files.length > 0){
                         const file = FileUploader.files[0];
