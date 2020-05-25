@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Disassembler</title>  
+		<script src="http://services.web-manufacture.net/Base/v1.6?join=true" type="text/javascript"></script>
+		<link href="http://services.web-manufacture.net/Styles/System.default.css" rel="stylesheet">
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+		<style type="text/css">
+		    body{
+		        font-size: 24px;
+		        background: black;
+		        color: white;
+		    }
+		    
+		    .header{
+		        height: 50px;
+		    }
+		    
+		    .body{
+		        height: calc(99% - 50px);
+		        display: flex;
+		        justify-content: space-between;
+		        align-items: stretch;
+		    }
+		    
+		    
+		    .body textarea{
+		        width: 80%;
+		        height: 100%;
+		        box-sizing: border-box;
+		    }
+		    
+		    #Results{
+		        width: 20%;
+		        height: 100%;
+		        background: #ffa;
+		        font-size: 1rem;
+		        color: black;
+		        overflow-y: scroll;
+		        overflow-x: hidden;
+		    }
+		    
+		    #Results .line{
+		        overflow: hidden;
+		    }
+		    
+		    #Results .line .part{
+		        display: inline;
+		        margin-right: 0.5rem;
+		    }
+		    
+		    #Results .part0{
+		        color: gray;
+		    }
+		    
+		</style>
+		<script type="text/javascript">
+		    function parse(){
+                var text = textBox.value;
+                localStorage.setItem("last_value", text);
+                var parsedText = text.split("\n");
+                parsedText.map((item)=>{
+                    var parts = item.split(" ");
+                    var line = Results.div(".line");
+                    var partNo = 0;
+                    parts.map((part)=>{
+                       line.div(".part.part" + partNo++, part); 
+                    });
+                });
+            }
+        
+            WS.DOMload(function(){
+                FileUploader.addEventListener('change', ()=>{
+                    if (FileUploader.files && FileUploader.files.length > 0){
+                        const file = FileUploader.files[0];
+                        var reader = new FileReader();
+                        reader.onload = function(){
+                          localStorage.setItem("last_value", reader.result);
+                          textBox.value = reader.result;
+                        };
+                        reader.readAsText(file);
+                    }    
+                });
+                var text = localStorage.getItem("last_value");
+                if (text){
+                    textBox.value = text;
+                }
+                
+            })
+            
+		</script>
+		
+	</head>
+	<body>
+        <include url="http://services.web-manufacture.net/UI/HtmlElements.htm"></include>
+        <div class="header">
+            <div class="btn-ira ok" onclick="parse()">Парсить</div>
+            <input type="file" id="FileUploader"></input>
+        </div>
+        <div class="body">
+		    <textarea id="textBox"></textarea>
+		    <div id="Results"></div>
+		</div>
+	</body>
+	<div>Help</div>
+	
+</html>
+
