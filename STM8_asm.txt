@@ -1,4 +1,4 @@
-00 XX                  NEG    (soff,SP)          ; Negate (Logical 2's complement)            M(soff+SP) <= -M(soff+SP)
+   00 XX               NEG    (soff,SP)          ; Negate (Logical 2's complement)            M(soff+SP) <= -M(soff+SP)
 72 00 MS LS XX         BTJT   lmem, #0, ssoff    ; BitTest and Jump if True                   PC<=PC+ssoff if M(lmem).#0==1 СС.C<=M(lmem).#0
    01                  RRWA   X                  ; Rotate Word Right through A                A -> XH -> XL - > A
 72 01 MS LS XX         BTJF   lmem, #0, ssoff    ; BitTest and Jump if False                  PC<=PC+ssoff if M(lmem).#0==0 СС.C<=M(lmem).#0
@@ -52,7 +52,7 @@
    15 XX               BCP    A, (soff,SP)       ; Logical Bit Compare                        {CC.N, CC.Z} <= Test{ A AND M(soff,SP) }
 72 15 MS LS            BRES   lmem, #2           ; Bit Reset                                  M(lmem).#2 <= 0
 90 15 MS LS            BCCM   lmem, #2           ; Copy Carry Bit                             M(lmem).#2 <= CC.C 
-   16                  None                      ;               ???????       
+   16                                            ;               ???????       
 72 16 MS LS            BSET   lmem, #3           ; Bit Set                                    M(lmem).#3 <= 1
 90 16 MS LS            BCPL   lmem, #3           ; Bit Complement                             M(lmem).#3 <= /M(lmem).#3
    17 XX               LDW    (soff,SP), Y       ; Load Word                                  M(soff+SP) <= Y
@@ -79,7 +79,7 @@
    1E XX               LDW    X, (soff,SP)       ; Load Word                                  X <= M(soff+SP)
 72 1E MS LS            BSET   lmem, #7           ; Bit Set                                    M(lmem).#7 <= 1 
 90 1E MS LS            BCPL   lmem, #7           ; Bit Complement                             M(lmem).#7 <= /M(lmem).#7
-   1F                  None                      ;               ???????       
+   1F                                            ;               ???????       
 72 1F MS LS            BRES   lmem, #7           ; Bit Reset                                  M(lmem).#7 <= 0
 90 1F MS LS            BCCM   lmem, #7           ; Copy Carry Bit                             M(lmem).#7 <= CC.C 
    20 XX               JRA    ssoff              ; Jump Relative Always                       PC <= PC + ssoff
@@ -309,13 +309,13 @@
 92 6F XX               CLR    ([sptr.w],X)       ; Clear                                      M(M(sptr).w+X) <= 0
    70                  NEG    (X)                ; Negate (Logical 2's complement)            M(X) <= -M(X)
 90 70                  NEG    (Y)                ; Negate (Logical 2's complement)            M(Y) <= -M(Y)
-   71                  IllegalOpcode             ; illegal opcode       
-   72                  prefix                    ; prefix PWSP      
+   71                                            ; illegal opcode       
+   72                 ; prefix PWSP      
    73                  CPL    (X)                ; Logical 1's complement                     M(X) <= /M(X)
 90 73                  CPL    (Y)                ; Logical 1's complement                     M(Y) <= /M(Y)
    74                  SRL    (X)                ; Shift Right Logical                        M(X).{0->#7->#6->#5->#4->#3->#2->#1->#0->CC.C}
 90 74                  SRL    (Y)                ; Shift Right Logical                        M(Y).{0->#7->#6->#5->#4->#3->#2->#1->#0->CC.C}
-   75                  IllegalOpcode             ; illegal opcode       
+   75                                            ; illegal opcode       
    76                  RRC    (X)                ; Rotate Right Logical through Carry         M(X).{CC.C->#7->#6->#5->#4->#3->#2->#1->#0->CC.C}
 90 76                  RRC    (Y)                ; Rotate Right Logical through Carry         M(Y).{CC.C->#7->#6->#5->#4->#3->#2->#1->#0->CC.C}
    77                  SRA    (X)                ; Shift Right Arithmetic                     M(X).{#7->#6->#5->#4->#3->#2->#1->#0->CC.C}
@@ -338,8 +338,8 @@
    7F                  CLR    (X)                ; Clear                                      M(X) <= 0
 90 7F                  CLR    (Y)                ; Clear                                      M(Y) <= 0
    80                  IRET                      ; Interrupt Return                           CC<=M(++SP) A<=M(++SP) XH<=M(++SP)
-   80                  IRET                      ; Interrupt Return                           XL<=M(++SP) YH<=M(++SP) YL<=M(++SP) 
-   80                  IRET                      ; Interrupt Return                           PCE<=M(++SP) PCH<=M(++SP) PCL<=M(++SP) 
+                                                 ;                                            XL<=M(++SP) YH<=M(++SP) YL<=M(++SP) 
+                                                 ;                                            PCE<=M(++SP) PCH<=M(++SP) PCL<=M(++SP) 
    81                  RET                       ; Return from subroutine                     PCE unch. PCH <= M(++SP)   PCL <= M(++SP)
    82 ExtB MS LS       INT    emem               ; Interrupt                                  PC <= emem
    83                  TRAP                      ; Software Interrupt
@@ -359,9 +359,9 @@
    8E                  HALT                      ; Halt Oscillator (CPU + Peripherals)        CC.I1 <= 1 CC.I0 <= 0
    8F                  WFI                       ; Wait For Interrupt (CPU stopped, low power mode)    CC.I1 <= 1 CC.I0 <= 0
 72 8F                  WFE                       ; Wait For Event (CPU stopped, low power mode)
-   90                  prefix                    ; prefix PDY              Replases an X based instruction by a Y one.
-   91                  prefix                    ; prefix PIY              indirect X by a Y one
-   92                  prefix                    ; prefix PIX              direct to indirect addressing mode  .
+   90                  ; prefix PDY              Replases an X based instruction by a Y one.
+   91                  ; prefix PIY              indirect X by a Y one
+   92                  ; prefix PIX              direct to indirect addressing mode  .
    93                  LDW    X, Y               ; Load Word                                  X  <= Y
 90 93                  LDW    Y, X               ; Load Word                                  Y  <= X
    94                  LDW    SP, X              ; Load Word                                  SP <= X
@@ -636,3 +636,4 @@
 90 FE                  LDW    Y, (Y)             ; Load Word                                  Y <= M(Y).w
    FF                  LDW    (X), Y             ; Load Word                                  M(Y).w <= Y
 90 FF                  LDW    (Y), X             ; Load Word                                  M(Y).w <= X
+ 

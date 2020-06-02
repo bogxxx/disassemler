@@ -1,0 +1,67 @@
+Glossary
+mnem     mnemonic
+src      source
+dst      destination
+cy       duration of the instruction in CPU clock cycles (internal clock)
+lgth     length of the instruction in byte(s)
+op-code  instruction byte(s) implementation (1..4 bytes), operation code.
+mem      memory location
+imm      immediate value
+off      offset
+ptr      pointer
+pos      position
+byte     a byte
+word     16-bit value
+short    represent a short 8-bit addressing mode
+long     represent a long 16-bit addressing mode
+EA       Effective Address: The final computed data byte address
+Page     Zero all data located at [00..FF] addressing space (single byte address)
+(XX)     content of a memory location XX
+XX       a byte value
+ExtB     Extended byte
+MS       Most Significant byte of a 16-bit value (MSB)
+LS       Least Significant byte of a 16-bit value (LSB)
+A        Accumulator register
+X        16-bit X Index register
+Y        16-bit Y Index register
+reg      A, XL or YL register (1-byte LS part of X/Y), XH or YH (1-byte MS part of X/Y)
+ndx      index register, either X or Y
+PC       24-bit Program Counter register
+SP       16-bit Stack Pointer
+S        Stack Pointer LSB
+CC       Condition Code register
+
+/////////////////////////////////.ihx_sample////////////////////////////////////////
+byte count / adress / record type /  data  = bc bytes      / checksum
+:07          8000          00       82 00 80 07   CC 80 82       A2
+                                    INT  emem     JP lmem
+:10          8007          00   AE 00 00 27 07 72 4F 00 00 5A 26 F9 AE 00 00 27   7E
+:0A80170009D68023D700005A26F78F
+:03          8021          00     CC 80 04                       0C
+                                    Jump
+:108024005F905F1305909F1204909FE12032F03CC60
+:10803400803F9D5C2602905CCC80278135FF5000F8
+:108044001E09891E09891E09891E0989CD80CB5BF9
+:1080540008899089CD80245B04C650005F43C750D3
+:10806400001E0D891E0D891E09891E0989CD80CB2C
+:108074005B08899089CD80245B04CC8040819A354B
+:10808400FF500235FF5003C650C6A4F7C750C6C6FA
+:1080940050C6A4EFC750C6C650C5AA02C750C535BE
+:1080A4000150C4C650C5A4014A2603CC80A74B0F77
+:1080B4005F894B004B055F894B004BD04B075F89B1
+:1080C400CD80405B0C5F815F89897B0A977B0E4280
+:1080D4001F037B09977B0E4272FB021F024FA9000C
+:1080E4006B017B0A977B0D4272FB021F024F190141
+:1080F4006B017B0A977B0C4272FB011F017B099782
+:108104007B0D4272FB011F017B08977B0E4272FBC1
+:10811400011F017B07977B0E429F1B016B017B0AAA
+:10812400977B0B429F1B016B017B09977B0C429F42
+:108134001B016B017B08977B0D429F1B016B019018
+:03814400858581AD
+:02000004FFFFFC
+:01FFFF000001
+//always
+:04   0000    03   00 00   80 07   72
+                    CS       IP
+:00   0000    01                   FF
+        END OF FILE

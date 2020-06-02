@@ -1,157 +1,194 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>Disassembler</title>  
-		<script src="http://services.web-manufacture.net/Base/v1.6?join=true" type="text/javascript"></script>
-		<link href="http://services.web-manufacture.net/Styles/System.default.css" rel="stylesheet">
-		<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-		<style type="text/css">
-		    body{
-		        font-size: 20px;
-		        background: black;
-		        color: white;
-		    }
-		    
-		    .header{
-		        height: 50px;
-		    }
-		    
-		    .body{
-		        height: calc(99% - 50px);
-		        display: flex;
-		        justify-content: space-between;
-		        align-items: stretch;
-		    }
-		    
-		    
-		    .body textarea{
-		        width: 80%;
-		        height: 100%;
-		        box-sizing: border-box;
-		        font-size: 10px;
-		    }
-		    
-		    #Results{
-		        width: 20%;
-		        height: 100%;
-		        background: #ffa;
-		        font-size: 1rem;
-		        color: black;
-		        overflow-y: scroll;
-		        overflow-x: hidden;
-		    }
-		    
-		    #Results .line{
-		        overflow: hidden;
-		    }
-		    
-		    #Results .line .part{
-		        display: inline;
-		        margin-right: 0.5rem;
-		    }
-		    
-		    #Results .opcode{
-		        color: red;
-		    }
-		    
-		    #Results .description{
-		        color: blue;
-		    }
-		    
-		    #Results .prefix{
-		        color: green;
-		    }
-		    
-		    #Results .params{
-		        color: grey;
-		    }
-		    /* zero part == asm command*/
-		    #Results .part0{ 
-		        color: #00FFFF;
-		    }
+<head>
+	<title>Disassembler</title>
+	<script src="http://services.web-manufacture.net/Base/v1.6?join=true" type="text/javascript"></script>
+	<link href="http://services.web-manufacture.net/Styles/System.default.css" rel="stylesheet">
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<style type="text/css">
+		body{
+			font-size: 20px;
+			background: black;
+			color: white;
+		}
 
-		    
-		</style>
-		<script type="text/javascript">
-		    var prefix = [72, 90, 91, 92];
-		    var params = ['XX', 'LS', 'MS', 'ExtB', 'LS1', 'MS1', 'LS2', 'MS2', 'XX1','XX2']
-		    function parse(){
-                var text = textBox.value;
-                localStorage.setItem("last_value", text);
-                var parsedText = text.split("\n"); // split for line
-                parsedText.map((item)=>{
-                    var elements = item.split(";"); // split for before descr and descr
-                    
-                    var parts = elements[0].split(" "); // split work part of line for words
-                    var line = Results.div(".line");
-                    var partNo = 0;
-                    parts.map((part)=>{
-                        let flag = 0;
-                        regexp = /[^A-Fa-f0-9]/i
-                        if (part != ""){
-                            for (var i = 0; i < prefix.length; i++){ // check is it prefix
-                                if (prefix[i] == part){
-                                    flag = 1; //flag == 1 => prefix
-                                }
-                            }
-                            for (var i = 0; i < params.length; i++){ // check is it prefix
-                                if (params[i] == part){
-                                    flag = 2; //flag == 1 => prefix
-                                }
-                            }
-                            if (flag == 1) {
-                                line.div(".part" + ".prefix", part);  // mark as prefix
-                            } else
-                            if (flag == 2){
-                                line.div(".part" + '.params', part); //parameters
-                            } else
-                            if (!regexp.test(part) && 0 <= parseInt(part, 16) && parseInt(part, 16) <= 255){ //opcode checking
-                                line.div(".part." + ".opcode", part);  //opcode
-                            } else
-                            line.div(".part.part" + partNo++, part);  // otherwise
-                        }
-                    });
-                    
-                    if (elements[1] != ""){
-                            line.div(".part" + ".description", elements[1]); // line after ; marked as description
-                    }
-                });
-            }
-        
-            WS.DOMload(function(){ //magic function for loading last parsed text
-                FileUploader.addEventListener('change', ()=>{
-                    if (FileUploader.files && FileUploader.files.length > 0){
-                        const file = FileUploader.files[0];
-                        var reader = new FileReader();
-                        reader.onload = function(){
-                          localStorage.setItem("last_value", reader.result);
-                          textBox.value = reader.result;
-                        };
-                        reader.readAsText(file);
-                    }    
-                });
-                var text = localStorage.getItem("last_value");
-                if (text){
-                    textBox.value = text;
-                }
-                
-            })
-            
-		</script>
-		
-	</head>
-	<body>
-        <include url="http://services.web-manufacture.net/UI/HtmlElements.htm"></include>
-        <div class="header">
-            <div class="btn-ira ok" onclick="parse()">Парсить</div>
-            <input type="file" id="FileUploader"></input>
-        </div>
-        <div class="body">
-		    <textarea id="textBox"></textarea>
-		    <div id="Results"></div>
-		</div>
-	</body>
-	<div>Help</div>
-	
+		.header{
+			height: 50px;
+		}
+
+		.body{
+			height: calc(99% - 50px);
+			display: flex;
+			justify-content: space-between;
+			align-items: stretch;
+		}
+
+
+		.body textarea{
+			width: 50%;
+			height: 100%;
+			box-sizing: border-box;
+			font-size: 10px;
+		}
+
+		#Results{
+			width: 50%;
+			height: 100%;
+			background: #ffa;
+			font-size: 15px;
+			color: black;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		}
+
+		#Results .line{
+			overflow: hidden;
+		}
+
+		#Results .line .part{
+			display: inline;
+			margin-right: 0.5rem;
+		}
+
+		#Results .opcode{
+			color: red;
+		}
+
+		#Results .description{
+			color: blue;
+		}
+
+		#Results .prefix{
+			color: green;
+		}
+
+		#Results .params{
+			color: grey;
+		}
+		/* zero part == asm command*/
+		#Results .part0{
+			color: #00FFFF;
+		}
+
+
+	</style>
+	<script type="text/javascript">
+		var prefix = [72, 90, 91, 92];
+		var params = ['XX', 'LS', 'MS', 'ExtB', 'LS1', 'MS1', 'LS2', 'MS2', 'XX1','XX2'];
+
+		var struct = {
+
+		};
+
+		function parse(){
+			var text = textBox.value;
+			localStorage.setItem("last_value", text);
+			var parsedText = text.split("\n"); // split for line
+
+			parsedText.map((item)=>{
+				var elements = item.split(";"); // split for before descr and descr
+				var parts = elements[0].split(" "); // split work part of line for words
+				var line = Results.div(".line");
+				var partNo = 0;
+				var opcode;
+
+				var command = {
+					name: null ,
+					size: 0,
+					pref: null,
+					operands: null,
+					description: null,
+				}
+
+				parts.map((part)=>{
+					let flag = 0;
+					regexp = /[^A-Fa-f0-9]/i
+					if (part != ""){
+						for (var i = 0; i < prefix.length; i++){ // check is it prefix
+							if (prefix[i] == part){
+								flag = 1; //flag == 1 => prefix
+							}
+						}
+						for (var i = 0; i < params.length; i++){ // check is it prefix
+							if (params[i] == part){
+								flag = 2; //flag == 1 => prefix
+							}
+						}
+						if (flag == 1) {
+							line.div(".part" + ".prefix", part);  // mark as prefix
+							command.pref = part;
+						} else
+						if (flag == 2){
+							command.size++;
+							line.div(".part" + '.params', part); //parameters (operands)
+							if (command.operands) {
+								command.operands.push(part);
+
+							} else {
+								command.operands = [part];
+							}
+						} else
+						if (!regexp.test(part) && 0 <= parseInt(part, 16) && parseInt(part, 16) <= 255){ //opcode checking
+							line.div(".part." + ".opcode", part);  //opcode
+							opcode = part;
+
+						} else{
+							if (!partNo) command.name = part;
+							line.div(".part.part" + partNo++, part);  // otherwise
+
+						}
+					}
+				});
+
+				if (elements[1] != ""){
+					line.div(".part" + ".description", elements[1]); // line after ; marked as description
+					command.description = elements[1];
+				}
+				if (struct[opcode]) {
+					for (let field in command){
+						struct[opcode][field].push(command[field]);
+					}
+				} else{
+					struct[opcode] = {};
+					for (let field in command){
+						struct[opcode][field] = [command[field]];
+					}
+				}
+			});
+			console.log (struct);
+		}
+
+		WS.DOMload(function(){ //magic function for loading last parsed text
+			FileUploader.addEventListener('change', ()=>{
+				if (FileUploader.files && FileUploader.files.length > 0){
+					const file = FileUploader.files[0];
+					var reader = new FileReader();
+					reader.onload = function(){
+						localStorage.setItem("last_value", reader.result);
+						textBox.value = reader.result;
+					};
+					reader.readAsText(file);
+				}
+			});
+			var text = localStorage.getItem("last_value");
+			if (text){
+				textBox.value = text;
+			}
+
+		})
+
+	</script>
+
+</head>
+<body>
+<include url="http://services.web-manufacture.net/UI/HtmlElements.htm"></include>
+<div class="header">
+	<div class="btn-ira ok" onclick="parse()">Парсить</div>
+	<input type="file" id="FileUploader"></input>
+</div>
+<div class="body">
+	<textarea id="textBox"></textarea>
+	<div id="Results"></div>
+</div>
+</body>
 </html>
-
